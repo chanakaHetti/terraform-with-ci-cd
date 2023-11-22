@@ -38,3 +38,27 @@ resource "aws_eip" "nat_eip" {
 #         name = "NAT Gateway"
 #     }
 # }
+
+# Create the public route table
+resource "aws_route_table" "public_rt" {
+    vpc_id = aws_vpc.production_vpc.id
+    route {
+        cidr_block = var.all_cidr
+        gateway_id = aws_internet_gateway.igw.id
+    }
+    tags = {
+        Name = "public RT"
+    }
+}
+
+# Create the private route table
+resource "aws_route_table" "private_rt" {
+    vpc_id = aws_vpc.production_vpc.id
+    route {
+        cidr_block = var.all_cidr
+        nat_gateway_id = aws_nat_gateway.nat_gw.id
+    }
+    tags = {
+        Name = "private RT"
+    }
+}
